@@ -45,14 +45,15 @@ for (rep in simulation_results$sim_rep){
   TSS_df$phi_male <- rep(0.2,nrow(TSS_df))
   time_since_sunrise <- seq(-4,10,by = 1) # use this to create a somewhat realistic curve and then fit a spline through it to smooth it out for simulation
   phi_male <- c(0,0.1,0.1,0.1,0.4,0.5,0.3,0.3,0.2,0.2,0.2,0.2,0.15,0.1,0.1)
+  phi_male <- cumsum(rep(0.05,length(time_since_sunrise)))
   gam_male <- gam(phi_male~s(time_since_sunrise, k = 11))
   TSS_df$phi_male <- predict(gam_male, newdata = TSS_df)
   
   # Females assumed to have constant detection
   TSS_df$phi_female <- rep(0,nrow(TSS_df))
   
-  # plot(phi_male~time_since_sunrise, data = TSS_df, ylim = c(0,1), type ="l", col = "blue", lwd = 2, ylab = "cue rate per minute", xlab = "time since sunrise", main = "cue rate across the morning")
-  # lines(phi_female~time_since_sunrise, data = TSS_df, col = "red", lwd = 2)
+  #plot(phi_male~time_since_sunrise, data = TSS_df, ylim = c(0,1), type ="l", col = "blue", lwd = 2, ylab = "cue rate per minute", xlab = "time since sunrise", main = "cue rate across the morning")
+  #lines(phi_female~time_since_sunrise, data = TSS_df, col = "red", lwd = 2)
   
   # --------------------------------
   # Simulate survey data; attempt to recreate the curve and estimate total density
@@ -130,10 +131,11 @@ for (rep in simulation_results$sim_rep){
     geom_line(aes(x = time_since_sunrise, y = phi_male), col = "blue", linewidth=2)+
     geom_line(aes(x = time_since_sunrise, y = phi_female), col = "red", linewidth=2)+
     geom_line(aes(x = time_since_sunrise, y = phi_pred), col = "black", linewidth=2, linetype = 2)+
+    geom_vline(xintercept = mean(survey_data$time_since_sunrise))+
     theme_bw()+
     ylab("Cue rate")+
     xlab("Hours Since Sunrise")
-  #print(testplot)
+  print(testplot)
   
   # ------------------------------------
   # Attempt to estimate a temporal correction factor and estimate overall population total using QPAD and GAM effect of time of day
@@ -219,6 +221,7 @@ for (rep in simulation_results$sim_rep){
   TSS_df$phi_male <- rep(0.2,nrow(TSS_df))
   time_since_sunrise <- seq(-4,10,by = 1) # use this to create a somewhat realistic curve and then fit a spline through it to smooth it out for simulation
   phi_male <- c(0,0.1,0.1,0.1,0.4,0.5,0.3,0.3,0.2,0.2,0.2,0.2,0.15,0.1,0.1)
+  phi_male <- cumsum(rep(0.05,length(time_since_sunrise)))
   gam_male <- gam(phi_male~s(time_since_sunrise, k = 11))
   TSS_df$phi_male <- predict(gam_male, newdata = TSS_df)
   
